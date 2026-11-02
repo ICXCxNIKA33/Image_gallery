@@ -16,7 +16,11 @@ namespace Image_Gallery
         {
             InitializeComponent();
 
-            // create a sample image objects
+
+
+            // documented test code
+
+            /* create a sample image objects
             ImageData image1 = new ImageData();
             image1.FileName = "sample.jpg";
             image1.FilePath = @"C:\images\sample.jpg";
@@ -70,7 +74,7 @@ namespace Image_Gallery
                 $"Date Added: {image.DateAdded}\n\n";
             }
 
-            MessageBox.Show(message);
+            MessageBox.Show(message); */
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -106,6 +110,86 @@ namespace Image_Gallery
         private void label1_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void uploadImageToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            // filter file types
+            ofdUploadImage.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|All Files|*.*";
+
+            // open file dialog title
+            ofdUploadImage.Title = "Select an Image";
+
+            // validate openFileDialog result
+            if (ofdUploadImage.ShowDialog() == DialogResult.OK)
+            {
+                // get file path
+                string filepath = ofdUploadImage.FileName;
+
+                // try catch for validating file type
+                try
+                {
+                    // validate file extension 
+                    string extension = Path.GetExtension(filepath).ToLower();
+
+                    // if block for invalid file extension
+                    if (extension != ".jpg" &&
+                        extension != ".jpeg" &&
+                        extension != ".png" &&
+                        extension != ".bmp" &&
+                        extension != ".gif")
+                    {
+                        // throw invalid extension exception
+                        throw new InvalidDataException("Selected file is not a supported image type!");
+                    }
+
+                    // extract image from file path
+                    Image img = Image.FromFile(filepath);
+
+                    // display image in picturebox
+                    IGpictureBox1.Image = img;
+
+                    
+
+                    // collect metadata with filepath data and Path and Datetime functions
+                    ImageData imageInfo = new ImageData
+                    {
+                        FileName = Path.GetFileName(filepath),
+                        FilePath = filepath,
+                        DateAdded = DateTime.Now,
+                    };
+                    
+                    //create fileinfo object
+                    FileInfo file = new FileInfo(filepath);
+
+                    // assign file size and info metadata
+                    imageInfo.fileSize = (int)file.Length;
+                    imageInfo.fileExtension = file.Extension;
+
+                    // metadata debug test doucmentation
+                    /*System.Diagnostics.Debug.WriteLine(
+                        $"{imageInfo.FileName} | " +
+                        $"{imageInfo.FilePath} | " +
+                        $"{imageInfo.fileSize}"
+                        );*/
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "Error loading image:\n" + ex.Message,
+                        "Upload Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+
+
+            }
+
+        }
+
+        private void IGpictureBox1_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }

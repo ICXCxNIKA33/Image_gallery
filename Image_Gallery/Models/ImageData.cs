@@ -8,6 +8,11 @@ namespace ImageGallery.Models
         public string Description { get; set;  }
         public List<string> Tags { get; set; }
 
+        public int fileSize { get; set; }
+
+        public string fileExtension { get; set; }
+
+        // constructor, sets date and empty tags list automaticly 
         public ImageData()
         {
             Tags = new List<string>();

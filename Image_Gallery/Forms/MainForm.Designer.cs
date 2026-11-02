@@ -38,6 +38,7 @@
             lbxTagManagement = new ListBox();
             lblTagManager = new Label();
             flpMainGallery = new FlowLayoutPanel();
+            IGpictureBox1 = new PictureBox();
             picImagePreview = new PictureBox();
             lblPreview = new Label();
             gbxMetadata = new GroupBox();
@@ -50,7 +51,10 @@
             lblDateAdded = new Label();
             lblFileName = new Label();
             lblStatusMessage = new Label();
+            ofdUploadImage = new OpenFileDialog();
             menuStrip.SuspendLayout();
+            flpMainGallery.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)IGpictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)picImagePreview).BeginInit();
             gbxMetadata.SuspendLayout();
             SuspendLayout();
@@ -104,6 +108,7 @@
             uploadImageToolStripMenuItem1.Name = "uploadImageToolStripMenuItem1";
             uploadImageToolStripMenuItem1.Size = new Size(118, 24);
             uploadImageToolStripMenuItem1.Text = "Upload Image";
+            uploadImageToolStripMenuItem1.Click += uploadImageToolStripMenuItem1_Click;
             // 
             // exitToolStripMenuItem
             // 
@@ -130,10 +135,22 @@
             // 
             // flpMainGallery
             // 
+            flpMainGallery.Controls.Add(IGpictureBox1);
             flpMainGallery.Location = new Point(201, 52);
             flpMainGallery.Name = "flpMainGallery";
             flpMainGallery.Size = new Size(1107, 723);
             flpMainGallery.TabIndex = 9;
+            // 
+            // IGpictureBox1
+            // 
+            IGpictureBox1.BorderStyle = BorderStyle.FixedSingle;
+            IGpictureBox1.Location = new Point(3, 3);
+            IGpictureBox1.Name = "IGpictureBox1";
+            IGpictureBox1.Size = new Size(165, 124);
+            IGpictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            IGpictureBox1.TabIndex = 0;
+            IGpictureBox1.TabStop = false;
+            IGpictureBox1.Click += IGpictureBox1_Click;
             // 
             // picImagePreview
             // 
@@ -249,6 +266,10 @@
             lblStatusMessage.TabIndex = 13;
             lblStatusMessage.Text = "Status Message:";
             // 
+            // ofdUploadImage
+            // 
+            ofdUploadImage.FileName = "openFileDialog1";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -270,6 +291,8 @@
             Load += Form1_Load;
             menuStrip.ResumeLayout(false);
             menuStrip.PerformLayout();
+            flpMainGallery.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)IGpictureBox1).EndInit();
             ((System.ComponentModel.ISupportInitialize)picImagePreview).EndInit();
             gbxMetadata.ResumeLayout(false);
             gbxMetadata.PerformLayout();
@@ -303,5 +326,7 @@
         private TextBox txtFileName;
         private Label lblFilePath;
         private Label lblStatusMessage;
+        private OpenFileDialog ofdUploadImage;
+        private PictureBox IGpictureBox1;
     }
 }
