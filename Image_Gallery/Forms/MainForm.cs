@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-
+using System.Drawing.Text;
+using System.Security.Cryptography.X509Certificates;
 using ImageGallery.Models;
 // represents metadata for a gallery image
 
@@ -9,8 +10,8 @@ namespace Image_Gallery
 
     public partial class MainForm : Form
     {
-        // test ImageData object for sprint 2
-        private List<ImageData> testImages = new List<ImageData>();
+        // list for holding ImageData objects
+        private List<ImageData> imageGallery = new List<ImageData>();
 
         public MainForm()
         {
@@ -149,7 +150,7 @@ namespace Image_Gallery
                     // display image in picturebox
                     IGpictureBox1.Image = img;
 
-                    
+
 
                     // collect metadata with filepath data and Path and Datetime functions
                     ImageData imageInfo = new ImageData
@@ -158,7 +159,7 @@ namespace Image_Gallery
                         FilePath = filepath,
                         DateAdded = DateTime.Now,
                     };
-                    
+
                     //create fileinfo object
                     FileInfo file = new FileInfo(filepath);
 
@@ -172,6 +173,25 @@ namespace Image_Gallery
                         $"{imageInfo.FilePath} | " +
                         $"{imageInfo.fileSize}"
                         );*/
+
+                    // finally, add created image object to the list
+                    imageGallery.Add(imageInfo);
+
+                    // screen for testing list of files 
+                    string message = "";
+
+                    foreach (ImageData image in imageGallery)
+                    {
+                        message +=
+                            $"Name: {image.FileName}\n" +
+                            $"Path: {image.FilePath}\n" +
+                            $"Extension: {image.fileExtension}\n" +
+                            $"Size: {image.fileSize} bytes\n" +
+                            $"Added: {image.DateAdded}\n\n";
+                    }
+
+                    MessageBox.Show(message);
+
                 }
                 catch (Exception ex)
                 {
@@ -189,7 +209,12 @@ namespace Image_Gallery
 
         private void IGpictureBox1_Click(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+           this.Close();
         }
     }
 }
