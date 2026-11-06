@@ -1,81 +1,99 @@
 using System.Collections.Generic;
 using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
+using Image_Gallery.Forms;
 using ImageGallery.Models;
 // represents metadata for a gallery image
 
+
+
 namespace Image_Gallery
 {
-
 
     public partial class MainForm : Form
     {
         // list for holding ImageData objects
         private List<ImageData> imageGallery = new List<ImageData>();
+        private ImageData selectedImage = null;
 
+        // selected thumbnail field
+        private PictureBox? selectedThumbnail;
+
+
+        // constructor, Initialize component and apply properties to main flow layout panel
         public MainForm()
         {
             InitializeComponent();
 
+            flpMainGallery.AutoScroll = true;
+            flpMainGallery.WrapContents = true;
+            flpMainGallery.FlowDirection = FlowDirection.LeftToRight;
+        }
 
 
-            // documented test code
 
-            /* create a sample image objects
-            ImageData image1 = new ImageData();
-            image1.FileName = "sample.jpg";
-            image1.FilePath = @"C:\images\sample.jpg";
-            image1.Description = "Sprint 2 test image";
+        // function to refresh gallery
+        private void RefreshGallery()
+        {
+            flpMainGallery.Controls.Clear();
 
-            ImageData image2 = new ImageData();
-            image2.FileName = "forest.jpg";
-            image2.FilePath = @"C:\Images\forest.jpg";
-            image2.Description = "Forest test image";
-
-            ImageData image3 = new ImageData();
-            image3.FileName = "beach.jpg";
-            image3.FilePath = @"C:\Images\beach.jpg";
-            image3.Description = "Beach test image";
-
-            // add tags
-            image1.Tags.Add("Test");
-            image2.Tags.Add("Nature");
-            image3.Tags.Add("Vacation");
-
-            // store in collection
-            testImages.Add(image1);
-            testImages.Add(image2);
-            testImages.Add(image3);
-
-            MessageBox.Show(
-                $"Image 1: {image1.FileName} ({image1.Description})\n" +
-                $"Image 2: {image2.FileName} ({image2.Description})\n" +
-                $"Image 3: {image3.FileName} ({image3.Description})");
-
-            MessageBox.Show(
-                $"Image 1 Tags: {image1.Tags.Count}\n" +
-                $"Image 2 Tags: {image2.Tags.Count}\n" +
-                $"Image 3 Tags: {image3.Tags.Count}");
-
-            MessageBox.Show(
-                $"Image 1 Tag: {image1.Tags[0]}\n" +
-                $"Image 2 Tag: {image2.Tags[0]}\n" +
-                $"Image 3 Tag: {image3.Tags[0]}");
-
-            MessageBox.Show($"Created {testImages.Count} test images.");
-
-            string message = "";
-
-            foreach (ImageData image in testImages)
+            foreach (ImageData image in imageGallery)
             {
-                message +=
-                $"File Name: {image.FileName}\n" +
-                $"File Path: {image.FilePath}\n" +
-                $"Description: {image.Description}\n" +
-                $"Date Added: {image.DateAdded}\n\n";
+                PictureBox thumbnail = new PictureBox();
+
+                // read files for image thumbnail
+                using (FileStream fs = new FileStream(
+                    image.FilePath,
+                    FileMode.Open,
+                    FileAccess.Read))
+                {
+                    thumbnail.Image = Image.FromStream(fs);
+                }
+                
+                // set thumbnail properties
+                thumbnail.Width = 150;
+                thumbnail.Height = 120;
+                thumbnail.SizeMode = PictureBoxSizeMode.Zoom;
+                thumbnail.BorderStyle = BorderStyle.FixedSingle;
+                thumbnail.Margin = new Padding(5);
+
+                // store ImageData object
+                thumbnail.Tag = image;
+
+                // register click event
+                thumbnail.Click += Thumbnail_Click;
+
+                flpMainGallery.Controls.Add(thumbnail);
+            }
+        }
+
+        // thumbnail click event handler
+        private void Thumbnail_Click(object? sender, EventArgs e)
+        {
+            PictureBox pb = (PictureBox)sender!;
+
+            if (selectedThumbnail != null)
+            {
+                selectedThumbnail.BackColor = Color.Transparent;
             }
 
-            MessageBox.Show(message); */
+            pb.BackColor = Color.LightBlue;
+
+            selectedThumbnail = pb;
+
+            ImageData image = (ImageData)pb.Tag!;
+
+            selectedImage = image;
+
+            picImagePreview.Image = Image.FromFile(image.FilePath);
+
+            //show metadata in preview column
+
+            txtFileName.Text = image.FileName;
+            txtDateAdded.Text = image.DateAdded.ToString("MM/dd/yyyy HH:mm");
+            txtFilePath.Text = image.FilePath;
+
+
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -150,8 +168,6 @@ namespace Image_Gallery
                     // display image in picturebox
                     IGpictureBox1.Image = img;
 
-
-
                     // collect metadata with filepath data and Path and Datetime functions
                     ImageData imageInfo = new ImageData
                     {
@@ -167,32 +183,14 @@ namespace Image_Gallery
                     imageInfo.fileSize = (int)file.Length;
                     imageInfo.fileExtension = file.Extension;
 
-                    // metadata debug test doucmentation
-                    /*System.Diagnostics.Debug.WriteLine(
-                        $"{imageInfo.FileName} | " +
-                        $"{imageInfo.FilePath} | " +
-                        $"{imageInfo.fileSize}"
-                        );*/
-
                     // finally, add created image object to the list
                     imageGallery.Add(imageInfo);
 
-                    // screen for testing list of files 
-                    string message = "";
-
-                    foreach (ImageData image in imageGallery)
-                    {
-                        message +=
-                            $"Name: {image.FileName}\n" +
-                            $"Path: {image.FilePath}\n" +
-                            $"Extension: {image.fileExtension}\n" +
-                            $"Size: {image.fileSize} bytes\n" +
-                            $"Added: {image.DateAdded}\n\n";
-                    }
-
-                    MessageBox.Show(message);
+                    // refresh gallery
+                    RefreshGallery();
 
                 }
+                //catch exceptions
                 catch (Exception ex)
                 {
                     MessageBox.Show(
@@ -212,9 +210,80 @@ namespace Image_Gallery
 
         }
 
+        // keyboard shortcut foir debug menu
+        protected override bool ProcessCmdKey(
+            ref Message msg,
+            Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.Shift | Keys.D))
+            {
+                new DebugForm(imageGallery).ShowDialog();
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           this.Close();
+            this.Close();
+        }
+
+        private void picImagePreview_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // deletes images
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (selectedImage == null)
+            {
+                // if image is not selected already
+                MessageBox.Show(
+                    "Please select an image first.",
+                    "No Image Selected",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+                // yes/no dialog confirming user wants to delete an image
+                DialogResult result = MessageBox.Show(
+                    $"Delete '{selectedImage.FileName}'?",
+                    "Confirm Delete",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question);
+
+                if (result != DialogResult.Yes)
+                {
+                    return;
+                }
+
+                // remove from gallery list
+                imageGallery.Remove(selectedImage);
+
+                // clear preview
+                picImagePreview.Image = null;
+
+                txtFileName.Clear();
+                txtDateAdded.Clear();
+                txtFilePath.Clear();
+
+                // reset selection
+                selectedImage = null;
+                selectedThumbnail = null;
+
+                // rebuild gallery
+                RefreshGallery();
+
+                // show succesfull deletion of item
+                MessageBox.Show(
+                    "Image deleted successfully.",
+                    "Delete Complete",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
         }
     }
-}

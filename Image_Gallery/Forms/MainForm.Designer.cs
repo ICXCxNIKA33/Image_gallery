@@ -52,6 +52,7 @@
             lblFileName = new Label();
             lblStatusMessage = new Label();
             ofdUploadImage = new OpenFileDialog();
+            deleteImageToolStripMenuItem = new ToolStripMenuItem();
             menuStrip.SuspendLayout();
             flpMainGallery.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)IGpictureBox1).BeginInit();
@@ -88,7 +89,7 @@
             // menuStrip
             // 
             menuStrip.ImageScalingSize = new Size(20, 20);
-            menuStrip.Items.AddRange(new ToolStripItem[] { uploadImageToolStripMenuItem, uploadImageToolStripMenuItem1, exitToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { uploadImageToolStripMenuItem, uploadImageToolStripMenuItem1, deleteImageToolStripMenuItem, exitToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(1627, 28);
@@ -158,6 +159,7 @@
             picImagePreview.Location = new Point(1341, 75);
             picImagePreview.Name = "picImagePreview";
             picImagePreview.Size = new Size(249, 228);
+            picImagePreview.SizeMode = PictureBoxSizeMode.Zoom;
             picImagePreview.TabIndex = 10;
             picImagePreview.TabStop = false;
             // 
@@ -271,6 +273,13 @@
             // 
             ofdUploadImage.FileName = "openFileDialog1";
             // 
+            // deleteImageToolStripMenuItem
+            // 
+            deleteImageToolStripMenuItem.Name = "deleteImageToolStripMenuItem";
+            deleteImageToolStripMenuItem.Size = new Size(113, 24);
+            deleteImageToolStripMenuItem.Text = "Delete Image";
+            deleteImageToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -329,5 +338,6 @@
         private Label lblStatusMessage;
         private OpenFileDialog ofdUploadImage;
         private PictureBox IGpictureBox1;
+        private ToolStripMenuItem deleteImageToolStripMenuItem;
     }
 }
