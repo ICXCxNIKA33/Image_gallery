@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Image_Gallery.Forms;
 using ImageGallery.Models;
 // represents metadata for a gallery image
@@ -29,6 +30,9 @@ namespace Image_Gallery
             flpMainGallery.AutoScroll = true;
             flpMainGallery.WrapContents = true;
             flpMainGallery.FlowDirection = FlowDirection.LeftToRight;
+
+            // disables the add tag button by default
+            btnAddTags.Enabled = false;
         }
 
 
@@ -81,7 +85,7 @@ namespace Image_Gallery
                         "Thumbnail Error");
                 }
             }
-                
+
         }
 
         // for updating preview
@@ -113,6 +117,9 @@ namespace Image_Gallery
             ImageData image = (ImageData)pb.Tag!;
 
             selectedImage = image;
+
+            // enables the add tag button
+            btnAddTags.Enabled = true;
 
             //show metadata and image in preview column
             UpdatePreview(image);
@@ -160,7 +167,7 @@ namespace Image_Gallery
             ofdUploadOrReplaceImage.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|All Files|*.*";
 
             // open file dialog title
-            ofdUploadOrReplaceImage.Title = "Select an Image";
+            ofdUploadOrReplaceImage.Title = "Select an Image For Uploading";
 
             // validate openFileDialog result
             if (ofdUploadOrReplaceImage.ShowDialog() == DialogResult.OK)
@@ -209,6 +216,9 @@ namespace Image_Gallery
                     // add newest image as the selected image
                     selectedImage = imageInfo;
 
+                    // enable add tag button
+                    btnAddTags.Enabled = true;
+
                     // refresh gallery
                     RefreshGallery();
 
@@ -233,7 +243,7 @@ namespace Image_Gallery
 
         }
 
-        // keyboard shortcut foir debug menu
+        // keyboard shortcut for debug menu
         protected override bool ProcessCmdKey(
             ref Message msg,
             Keys keyData)
@@ -298,6 +308,9 @@ namespace Image_Gallery
             selectedImage = null;
             selectedThumbnail = null;
 
+            // disable add tags button
+            btnAddTags.Enabled = false;
+
             // rebuild gallery
             RefreshGallery();
 
@@ -328,7 +341,7 @@ namespace Image_Gallery
             ofdUploadOrReplaceImage.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|All Files|*.*";
 
             // open file
-            ofdUploadOrReplaceImage.Title = "Select an Image";
+            ofdUploadOrReplaceImage.Title = "Select an Image For Replacing";
 
             if (ofdUploadOrReplaceImage.ShowDialog() == DialogResult.OK)
             {
@@ -338,7 +351,7 @@ namespace Image_Gallery
                 {
                     // validate file extension 
                     string extension = Path.GetExtension(filepath).ToLower();
-                
+
                     if (extension != ".jpg" &&
                         extension != ".jpeg" &&
                         extension != ".png" &&
@@ -375,6 +388,104 @@ namespace Image_Gallery
                 }
             }
 
+        }
+
+        private void lbxTagManagement_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnAddTags_Click(object sender, EventArgs e)
+        {
+            // get string from user and add it to list box (autocapitalize first character, check for duplicates,
+            // do not accept empty string or strings with nothing but white space
+            // tag entry only enabled if image thumbnail is selected
+
+            // check that an image is selected
+            if (selectedImage == null)
+            {
+                MessageBox.Show("Please select an image for adding tags.",
+                                "No image selected!",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            try
+            {
+                // get tag from textbox
+                string tag = txtAddTags.Text.Trim();
+
+                // confirm tag contains characters
+                if (!ValidateTags(tag))
+                {
+                    MessageBox.Show(
+                        "Please enter a valid tag.",
+                        "Invalid Tag",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+
+                    return;
+                }
+                // capitalize word 
+                tag = char.ToUpper(tag[0]) + tag.Substring(1);
+
+                // check for duplicates
+                foreach (string existingTag in lbxMDTags.Items)
+                {
+                    if (existingTag.Equals(tag, StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show(
+                            "This tag already exists.",
+                            "Duplicate Tag",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
+
+                        return;
+                    }
+                }
+
+                // add to textbox
+                lbxMDTags.Items.Add(tag);
+
+                // user can type the next tag
+                txtAddTags.Clear();
+                txtAddTags.Focus();
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show("Invalid String\n" + ex.Message,
+                                "Update error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+            }
+        }
+
+        private bool ValidateTags(string tags)
+        {
+            return !string.IsNullOrWhiteSpace(tags);
+        }
+
+        private void lblFilePath_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        // enter key control for adding tags
+        private void txtAddTags_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnAddTags.PerformClick();
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

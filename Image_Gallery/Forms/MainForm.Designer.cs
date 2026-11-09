@@ -44,6 +44,8 @@
             picImagePreview = new PictureBox();
             lblPreview = new Label();
             gbxMetadata = new GroupBox();
+            txtAddTags = new TextBox();
+            btnAddTags = new Button();
             txtFilePath = new TextBox();
             lbxMDTags = new ListBox();
             txtDateAdded = new TextBox();
@@ -54,6 +56,7 @@
             lblFileName = new Label();
             lblStatusMessage = new Label();
             ofdUploadOrReplaceImage = new OpenFileDialog();
+            button1 = new Button();
             menuStrip.SuspendLayout();
             flpMainGallery.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)IGpictureBox1).BeginInit();
@@ -138,8 +141,9 @@
             lbxTagManagement.FormattingEnabled = true;
             lbxTagManagement.Location = new Point(12, 151);
             lbxTagManagement.Name = "lbxTagManagement";
-            lbxTagManagement.Size = new Size(150, 624);
+            lbxTagManagement.Size = new Size(200, 624);
             lbxTagManagement.TabIndex = 7;
+            lbxTagManagement.SelectedIndexChanged += lbxTagManagement_SelectedIndexChanged;
             // 
             // lblTagManager
             // 
@@ -153,9 +157,9 @@
             // flpMainGallery
             // 
             flpMainGallery.Controls.Add(IGpictureBox1);
-            flpMainGallery.Location = new Point(201, 52);
+            flpMainGallery.Location = new Point(232, 52);
             flpMainGallery.Name = "flpMainGallery";
-            flpMainGallery.Size = new Size(1107, 723);
+            flpMainGallery.Size = new Size(1076, 723);
             flpMainGallery.TabIndex = 9;
             // 
             // IGpictureBox1
@@ -190,6 +194,8 @@
             // gbxMetadata
             // 
             gbxMetadata.BackColor = SystemColors.Control;
+            gbxMetadata.Controls.Add(txtAddTags);
+            gbxMetadata.Controls.Add(btnAddTags);
             gbxMetadata.Controls.Add(txtFilePath);
             gbxMetadata.Controls.Add(lbxMDTags);
             gbxMetadata.Controls.Add(txtDateAdded);
@@ -200,17 +206,36 @@
             gbxMetadata.Controls.Add(lblFileName);
             gbxMetadata.Location = new Point(1330, 309);
             gbxMetadata.Name = "gbxMetadata";
-            gbxMetadata.Size = new Size(274, 466);
+            gbxMetadata.Size = new Size(274, 514);
             gbxMetadata.TabIndex = 12;
             gbxMetadata.TabStop = false;
             gbxMetadata.Text = "Image Metadata";
             // 
+            // txtAddTags
+            // 
+            txtAddTags.Location = new Point(10, 415);
+            txtAddTags.Name = "txtAddTags";
+            txtAddTags.Size = new Size(230, 27);
+            txtAddTags.TabIndex = 14;
+            txtAddTags.TextChanged += textBox1_TextChanged;
+            txtAddTags.KeyDown += txtAddTags_KeyDown;
+            // 
+            // btnAddTags
+            // 
+            btnAddTags.Location = new Point(11, 380);
+            btnAddTags.Name = "btnAddTags";
+            btnAddTags.Size = new Size(94, 29);
+            btnAddTags.TabIndex = 8;
+            btnAddTags.Text = "Add Tag";
+            btnAddTags.UseVisualStyleBackColor = true;
+            btnAddTags.Click += btnAddTags_Click;
+            // 
             // txtFilePath
             // 
-            txtFilePath.Location = new Point(6, 410);
+            txtFilePath.Location = new Point(10, 476);
             txtFilePath.Name = "txtFilePath";
             txtFilePath.ReadOnly = true;
-            txtFilePath.Size = new Size(226, 27);
+            txtFilePath.Size = new Size(258, 27);
             txtFilePath.TabIndex = 7;
             // 
             // lbxMDTags
@@ -240,11 +265,12 @@
             // lblFilePath
             // 
             lblFilePath.AutoSize = true;
-            lblFilePath.Location = new Point(6, 387);
+            lblFilePath.Location = new Point(10, 453);
             lblFilePath.Name = "lblFilePath";
             lblFilePath.Size = new Size(69, 20);
             lblFilePath.TabIndex = 3;
             lblFilePath.Text = "File path:";
+            lblFilePath.Click += lblFilePath_Click;
             // 
             // lblMDTags
             // 
@@ -278,7 +304,7 @@
             // lblStatusMessage
             // 
             lblStatusMessage.AutoSize = true;
-            lblStatusMessage.Location = new Point(48, 792);
+            lblStatusMessage.Location = new Point(54, 792);
             lblStatusMessage.Name = "lblStatusMessage";
             lblStatusMessage.Size = new Size(114, 20);
             lblStatusMessage.TabIndex = 13;
@@ -288,11 +314,21 @@
             // 
             ofdUploadOrReplaceImage.FileName = "openFileDialog1";
             // 
+            // button1
+            // 
+            button1.Location = new Point(68, 757);
+            button1.Name = "button1";
+            button1.Size = new Size(8, 8);
+            button1.TabIndex = 0;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1627, 821);
+            ClientSize = new Size(1627, 835);
+            Controls.Add(button1);
             Controls.Add(lblStatusMessage);
             Controls.Add(gbxMetadata);
             Controls.Add(lblPreview);
@@ -348,5 +384,8 @@
         private PictureBox IGpictureBox1;
         private ToolStripMenuItem deleteImageToolStripMenuItem;
         private ToolStripMenuItem replaceImageToolStripMenuItem;
+        private Button btnAddTags;
+        private Button button1;
+        private TextBox txtAddTags;
     }
 }
