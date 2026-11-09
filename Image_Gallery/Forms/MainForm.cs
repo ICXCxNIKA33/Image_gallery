@@ -36,42 +36,52 @@ namespace Image_Gallery
         // function to refresh gallery
         private void RefreshGallery()
         {
+            // clears gallery flow panel controls for rebuilding
+            selectedThumbnail = null;
             flpMainGallery.Controls.Clear();
 
+            // builds new thumbnails with pictureboxes 
             foreach (ImageData image in imageGallery)
             {
-                PictureBox thumbnail = new PictureBox();
-
-                // read files for image thumbnail
-                using (FileStream fs = new FileStream(
-                    image.FilePath,
-                    FileMode.Open,
-                    FileAccess.Read))
+                try
                 {
-                    thumbnail.Image = Image.FromStream(fs);
+                    PictureBox thumbnail = new PictureBox();
+
+                    thumbnail.Image = Image.FromFile(image.FilePath);
+
+                    // set thumbnail properties
+                    thumbnail.Width = 150;
+                    thumbnail.Height = 120;
+                    thumbnail.SizeMode = PictureBoxSizeMode.Zoom;
+                    thumbnail.BorderStyle = BorderStyle.FixedSingle;
+                    thumbnail.Margin = new Padding(5);
+
+                    // store ImageData object
+                    thumbnail.Tag = image;
+
+                    // put highlight colors back on selected thumbnail
+                    if (image == selectedImage)
+                    {
+                        thumbnail.BackColor = Color.LightBlue;
+                        selectedThumbnail = thumbnail;
+
+                        // updates image preview for selected image
+                        UpdatePreview(image);
+                    }
+
+                    // register click event
+                    thumbnail.Click += Thumbnail_Click;
+
+                    flpMainGallery.Controls.Add(thumbnail);
                 }
-
-                // set thumbnail properties
-                thumbnail.Width = 150;
-                thumbnail.Height = 120;
-                thumbnail.SizeMode = PictureBoxSizeMode.Zoom;
-                thumbnail.BorderStyle = BorderStyle.FixedSingle;
-                thumbnail.Margin = new Padding(5);
-
-                // store ImageData object
-                thumbnail.Tag = image;
-
-                // register click event
-                thumbnail.Click += Thumbnail_Click;
-
-                flpMainGallery.Controls.Add(thumbnail);
-
-                // updates image preview
-                if (selectedImage != null) 
+                catch (Exception ex)
                 {
-                    UpdatePreview(selectedImage);
+                    MessageBox.Show(
+                        $"Failed to load:\n{image.FilePath}\n\n{ex}",
+                        "Thumbnail Error");
                 }
             }
+                
         }
 
         // for updating preview
@@ -104,15 +114,8 @@ namespace Image_Gallery
 
             selectedImage = image;
 
-            picImagePreview.Image = Image.FromFile(image.FilePath);
-
-            //show metadata in preview column
-
-            txtFileName.Text = image.FileName;
-            txtDateAdded.Text = image.DateAdded.ToString("MM/dd/yyyy HH:mm");
-            txtFilePath.Text = image.FilePath;
-
-
+            //show metadata and image in preview column
+            UpdatePreview(image);
         }
 
         private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
@@ -202,6 +205,9 @@ namespace Image_Gallery
 
                     // finally, add created image object to the list
                     imageGallery.Add(imageInfo);
+
+                    // add newest image as the selected image
+                    selectedImage = imageInfo;
 
                     // refresh gallery
                     RefreshGallery();
