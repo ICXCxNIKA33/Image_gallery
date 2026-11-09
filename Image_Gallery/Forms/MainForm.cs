@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.Security.Cryptography.X509Certificates;
 using Image_Gallery.Forms;
@@ -49,7 +50,7 @@ namespace Image_Gallery
                 {
                     thumbnail.Image = Image.FromStream(fs);
                 }
-                
+
                 // set thumbnail properties
                 thumbnail.Width = 150;
                 thumbnail.Height = 120;
@@ -64,7 +65,25 @@ namespace Image_Gallery
                 thumbnail.Click += Thumbnail_Click;
 
                 flpMainGallery.Controls.Add(thumbnail);
+
+                // updates image preview
+                if (selectedImage != null) 
+                {
+                    UpdatePreview(selectedImage);
+                }
             }
+        }
+
+        // for updating preview
+        private void UpdatePreview(ImageData image)
+        {
+            picImagePreview.Image = Image.FromFile(image.FilePath);
+
+            //show metadata in preview column
+
+            txtFileName.Text = image.FileName;
+            txtDateAdded.Text = image.DateAdded.ToString("MM/dd/yyyy HH:mm");
+            txtFilePath.Text = image.FilePath;
         }
 
         // thumbnail click event handler
@@ -131,19 +150,20 @@ namespace Image_Gallery
 
         }
 
+        // function for uploading images
         private void uploadImageToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             // filter file types
-            ofdUploadImage.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|All Files|*.*";
+            ofdUploadOrReplaceImage.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|All Files|*.*";
 
             // open file dialog title
-            ofdUploadImage.Title = "Select an Image";
+            ofdUploadOrReplaceImage.Title = "Select an Image";
 
             // validate openFileDialog result
-            if (ofdUploadImage.ShowDialog() == DialogResult.OK)
+            if (ofdUploadOrReplaceImage.ShowDialog() == DialogResult.OK)
             {
                 // get file path
-                string filepath = ofdUploadImage.FileName;
+                string filepath = ofdUploadOrReplaceImage.FileName;
 
                 // try catch for validating file type
                 try
@@ -164,9 +184,6 @@ namespace Image_Gallery
 
                     // extract image from file path
                     Image img = Image.FromFile(filepath);
-
-                    // display image in picturebox
-                    IGpictureBox1.Image = img;
 
                     // collect metadata with filepath data and Path and Datetime functions
                     ImageData imageInfo = new ImageData
@@ -190,7 +207,7 @@ namespace Image_Gallery
                     RefreshGallery();
 
                 }
-                //catch exceptions
+                // catch exceptions
                 catch (Exception ex)
                 {
                     MessageBox.Show(
@@ -234,7 +251,7 @@ namespace Image_Gallery
 
         }
 
-        // deletes images
+        // function for deleting images
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
@@ -249,41 +266,109 @@ namespace Image_Gallery
                 return;
             }
 
-                // yes/no dialog confirming user wants to delete an image
-                DialogResult result = MessageBox.Show(
-                    $"Delete '{selectedImage.FileName}'?",
-                    "Confirm Delete",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
+            // yes/no dialog confirming user wants to delete an image
+            DialogResult result = MessageBox.Show(
+                $"Delete '{selectedImage.FileName}'?",
+                "Confirm Delete",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
-                if (result != DialogResult.Yes)
-                {
-                    return;
-                }
-
-                // remove from gallery list
-                imageGallery.Remove(selectedImage);
-
-                // clear preview
-                picImagePreview.Image = null;
-
-                txtFileName.Clear();
-                txtDateAdded.Clear();
-                txtFilePath.Clear();
-
-                // reset selection
-                selectedImage = null;
-                selectedThumbnail = null;
-
-                // rebuild gallery
-                RefreshGallery();
-
-                // show succesfull deletion of item
-                MessageBox.Show(
-                    "Image deleted successfully.",
-                    "Delete Complete",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+            if (result != DialogResult.Yes)
+            {
+                return;
             }
+
+            // remove from gallery list
+            imageGallery.Remove(selectedImage);
+
+            // clear preview
+            picImagePreview.Image = null;
+
+            txtFileName.Clear();
+            txtDateAdded.Clear();
+            txtFilePath.Clear();
+
+            // reset selection
+            selectedImage = null;
+            selectedThumbnail = null;
+
+            // rebuild gallery
+            RefreshGallery();
+
+            // show succesfull deletion of item
+            MessageBox.Show(
+                "Image deleted successfully.",
+                "Delete Complete",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        // function for replacing images
+        private void replaceImageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            if (selectedImage == null)
+            {
+                MessageBox.Show(
+                    "Please select an image first.",
+                    "No Image Selected",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return;
+            }
+
+            // filter file types
+            ofdUploadOrReplaceImage.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp;*.gif|All Files|*.*";
+
+            // open file
+            ofdUploadOrReplaceImage.Title = "Select an Image";
+
+            if (ofdUploadOrReplaceImage.ShowDialog() == DialogResult.OK)
+            {
+                string filepath = ofdUploadOrReplaceImage.FileName;
+
+                try
+                {
+                    // validate file extension 
+                    string extension = Path.GetExtension(filepath).ToLower();
+                
+                    if (extension != ".jpg" &&
+                        extension != ".jpeg" &&
+                        extension != ".png" &&
+                        extension != ".bmp" &&
+                        extension != ".gif")
+                    {
+                        throw new InvalidDataException("Selected file is not a supported image type!");
+                    }
+
+                    // extract image from file path
+                    Image img = Image.FromFile(filepath);
+
+                    // update metadata
+                    selectedImage.FileName = Path.GetFileName(filepath);
+                    selectedImage.FilePath = filepath;
+                    selectedImage.DateAdded = DateTime.Now;
+
+                    // for fileInfo metadata
+                    FileInfo file = new FileInfo(filepath);
+                    selectedImage.fileSize = (int)file.Length;
+                    selectedImage.fileExtension = file.Extension;
+
+                    // refresh gallery
+                    RefreshGallery();
+                }
+                // catch exceptions
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "Error replacing image:\n" + ex.Message,
+                        "Upload Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+            }
+
         }
     }
+}

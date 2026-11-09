@@ -34,6 +34,8 @@
             menuStrip = new MenuStrip();
             uploadImageToolStripMenuItem = new ToolStripMenuItem();
             uploadImageToolStripMenuItem1 = new ToolStripMenuItem();
+            replaceImageToolStripMenuItem = new ToolStripMenuItem();
+            deleteImageToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             lbxTagManagement = new ListBox();
             lblTagManager = new Label();
@@ -51,8 +53,7 @@
             lblDateAdded = new Label();
             lblFileName = new Label();
             lblStatusMessage = new Label();
-            ofdUploadImage = new OpenFileDialog();
-            deleteImageToolStripMenuItem = new ToolStripMenuItem();
+            ofdUploadOrReplaceImage = new OpenFileDialog();
             menuStrip.SuspendLayout();
             flpMainGallery.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)IGpictureBox1).BeginInit();
@@ -89,7 +90,7 @@
             // menuStrip
             // 
             menuStrip.ImageScalingSize = new Size(20, 20);
-            menuStrip.Items.AddRange(new ToolStripItem[] { uploadImageToolStripMenuItem, uploadImageToolStripMenuItem1, deleteImageToolStripMenuItem, exitToolStripMenuItem });
+            menuStrip.Items.AddRange(new ToolStripItem[] { uploadImageToolStripMenuItem, uploadImageToolStripMenuItem1, replaceImageToolStripMenuItem, deleteImageToolStripMenuItem, exitToolStripMenuItem });
             menuStrip.Location = new Point(0, 0);
             menuStrip.Name = "menuStrip";
             menuStrip.Size = new Size(1627, 28);
@@ -110,6 +111,20 @@
             uploadImageToolStripMenuItem1.Size = new Size(118, 24);
             uploadImageToolStripMenuItem1.Text = "Upload Image";
             uploadImageToolStripMenuItem1.Click += uploadImageToolStripMenuItem1_Click;
+            // 
+            // replaceImageToolStripMenuItem
+            // 
+            replaceImageToolStripMenuItem.Name = "replaceImageToolStripMenuItem";
+            replaceImageToolStripMenuItem.Size = new Size(122, 24);
+            replaceImageToolStripMenuItem.Text = "Replace Image";
+            replaceImageToolStripMenuItem.Click += replaceImageToolStripMenuItem_Click;
+            // 
+            // deleteImageToolStripMenuItem
+            // 
+            deleteImageToolStripMenuItem.Name = "deleteImageToolStripMenuItem";
+            deleteImageToolStripMenuItem.Size = new Size(113, 24);
+            deleteImageToolStripMenuItem.Text = "Delete Image";
+            deleteImageToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
@@ -269,16 +284,9 @@
             lblStatusMessage.TabIndex = 13;
             lblStatusMessage.Text = "Status Message:";
             // 
-            // ofdUploadImage
+            // ofdUploadOrReplaceImage
             // 
-            ofdUploadImage.FileName = "openFileDialog1";
-            // 
-            // deleteImageToolStripMenuItem
-            // 
-            deleteImageToolStripMenuItem.Name = "deleteImageToolStripMenuItem";
-            deleteImageToolStripMenuItem.Size = new Size(113, 24);
-            deleteImageToolStripMenuItem.Text = "Delete Image";
-            deleteImageToolStripMenuItem.Click += deleteToolStripMenuItem_Click;
+            ofdUploadOrReplaceImage.FileName = "openFileDialog1";
             // 
             // MainForm
             // 
@@ -336,8 +344,9 @@
         private TextBox txtFileName;
         private Label lblFilePath;
         private Label lblStatusMessage;
-        private OpenFileDialog ofdUploadImage;
+        private OpenFileDialog ofdUploadOrReplaceImage;
         private PictureBox IGpictureBox1;
         private ToolStripMenuItem deleteImageToolStripMenuItem;
+        private ToolStripMenuItem replaceImageToolStripMenuItem;
     }
 }
