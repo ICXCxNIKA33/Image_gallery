@@ -84,12 +84,12 @@ namespace Image_Gallery
             // use tag to retrive image
             tag = tag.ToLower().Trim();
 
-            if (tagIndex.ContainsKey(tag))
+            if (tagIndex.TryGetValue(tag, out List<ImageData> images))
             {
-                return tagIndex[tag];
+                return images;
             }
 
-            return new List<ImageData>(); 
+            return new List<ImageData>();
         }
 
         public bool TagExist(string tag)
@@ -287,7 +287,7 @@ namespace Image_Gallery
 
                     // enable add tag button
                     btnAddTags.Enabled = true;
-                    
+
                     // clear tag list
                     lbxMDTags.Items.Clear();
 
@@ -322,7 +322,7 @@ namespace Image_Gallery
         {
             if (keyData == (Keys.Control | Keys.Shift | Keys.D))
             {
-                new DebugForm(imageGallery).ShowDialog();
+                new DebugForm(imageGallery, tagIndex).ShowDialog();
                 return true;
             }
 
@@ -526,7 +526,7 @@ namespace Image_Gallery
                 AddTag(tag);
 
                 // associate tag with image
-                AddImagetoTag(tag, selectedImage);
+                AddImageToTag(tag, selectedImage);
 
                 // add tag to image's tag list property 
                 selectedImage.Tags.Add(tag);
@@ -560,7 +560,7 @@ namespace Image_Gallery
 
         }
 
-        // enter key control for adding tags
+        // enter key controls
         private void txtAddTags_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -569,5 +569,21 @@ namespace Image_Gallery
                 e.SuppressKeyPress = true;
             }
         }
+
+        private void txtSearchByTag_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnSearch.PerformClick();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void btnSearch_Click(object sender, EventArgs e)
+        {
+            string searchValue = txtSearchByTag.Text;
+            GetImagesByTag(searchValue);
+        }
+
     }
 }

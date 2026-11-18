@@ -35,6 +35,7 @@
             btnClose = new Button();
             btnRefresh = new Button();
             lblListImages = new Label();
+            btnDisplayTagIndex = new Button();
             SuspendLayout();
             // 
             // lblImageCount
@@ -75,7 +76,7 @@
             // 
             // btnClose
             // 
-            btnClose.Location = new Point(74, 711);
+            btnClose.Location = new Point(74, 807);
             btnClose.Name = "btnClose";
             btnClose.Size = new Size(161, 84);
             btnClose.TabIndex = 4;
@@ -102,11 +103,22 @@
             lblListImages.TabIndex = 6;
             lblListImages.Text = "List of Images";
             // 
+            // btnDisplayTagIndex
+            // 
+            btnDisplayTagIndex.Location = new Point(74, 706);
+            btnDisplayTagIndex.Name = "btnDisplayTagIndex";
+            btnDisplayTagIndex.Size = new Size(161, 84);
+            btnDisplayTagIndex.TabIndex = 7;
+            btnDisplayTagIndex.Text = "DIsplay tag index";
+            btnDisplayTagIndex.UseVisualStyleBackColor = true;
+            btnDisplayTagIndex.Click += btnDisplayTagIndex_Click;
+            // 
             // DebugForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(319, 812);
+            ClientSize = new Size(319, 903);
+            Controls.Add(btnDisplayTagIndex);
             Controls.Add(lblListImages);
             Controls.Add(btnRefresh);
             Controls.Add(btnClose);
@@ -129,5 +141,6 @@
         private Button btnClose;
         private Button btnRefresh;
         private Label lblListImages;
+        private Button btnDisplayTagIndex;
     }
 }

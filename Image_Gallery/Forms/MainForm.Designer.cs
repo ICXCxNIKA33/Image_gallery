@@ -70,6 +70,7 @@
             txtSearchByTag.Name = "txtSearchByTag";
             txtSearchByTag.Size = new Size(135, 27);
             txtSearchByTag.TabIndex = 2;
+            txtSearchByTag.KeyDown += txtSearchByTag_KeyDown;
             // 
             // lblSearchByTag
             // 
@@ -89,6 +90,7 @@
             btnSearch.TabIndex = 4;
             btnSearch.Text = "Search";
             btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.Click += btnSearch_Click;
             // 
             // menuStrip
             // 

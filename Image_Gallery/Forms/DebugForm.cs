@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -12,12 +13,14 @@ namespace Image_Gallery.Forms
     public partial class DebugForm : Form
     {
         private List<ImageData> images;
+        private Dictionary<string, List<ImageData>> tagsDict;
 
         // constructor, initializes local image list with MainForm ImageGallery list
-        public DebugForm(List<ImageData> ImageGallery)
+        public DebugForm(List<ImageData> ImageGallery, Dictionary<string, List<ImageData>> tagIndex)
         {
             InitializeComponent();
             images = ImageGallery;
+            tagsDict = tagIndex;
         }
 
         // refresh the image count label and list of images with updated information
@@ -49,6 +52,15 @@ namespace Image_Gallery.Forms
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnDisplayTagIndex_Click(object sender, EventArgs e)
+        {
+            foreach( var tag in tagsDict)
+            {
+                Debug.WriteLine(
+                    $"{tag.Key} : {tag.Value.Count} images");
+            }
         }
     }
 }
