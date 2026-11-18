@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Image_Gallery.Forms;
@@ -17,6 +18,9 @@ namespace Image_Gallery
         // list for holding ImageData objects
         private List<ImageData> imageGallery = new List<ImageData>();
         private ImageData selectedImage = null;
+
+        // index for mapping tags to images
+        Dictionary<string, List<ImageData>> tagIndex = new Dictionary<string, List<ImageData>>();
 
         // selected thumbnail field
         private PictureBox? selectedThumbnail;
@@ -35,7 +39,63 @@ namespace Image_Gallery
             btnAddTags.Enabled = false;
         }
 
+        // for adding tags
+        public void AddTag(string tag)
+        {
+            tag = tag.ToLower().Trim();
 
+            // filter blank entries
+            if (string.IsNullOrWhiteSpace(tag))
+            {
+                return;
+            }
+
+            // check for duplicates in the tag index
+            // then assingn a new ImageData list to the tag key
+            if (!tagIndex.ContainsKey(tag))
+            {
+                tagIndex[tag] = new List<ImageData>();
+            }
+        }
+
+        // for adding images to tags
+        public void AddImageToTag(string tag, ImageData image)
+        {
+            tag = tag.ToLower().Trim();
+
+
+            // check if a tag is already associated with an image and if not, 
+            // associate image with tag by adding ImageData item to Imagedata List value
+            if (!tagIndex.ContainsKey(tag))
+            {
+                tagIndex[tag] = new List<ImageData>();
+            }
+
+            if (!tagIndex[tag].Contains(image))
+            {
+                tagIndex[tag].Add(image);
+            }
+        }
+
+        // for getting images by tag
+        public List<ImageData> GetImagesByTag(string tag)
+        {
+
+            // use tag to retrive image
+            tag = tag.ToLower().Trim();
+
+            if (tagIndex.ContainsKey(tag))
+            {
+                return tagIndex[tag];
+            }
+
+            return new List<ImageData>(); 
+        }
+
+        public bool TagExist(string tag)
+        {
+            return tagIndex.ContainsKey(tag.ToLower().Trim());
+        }
 
         // function to refresh gallery
         private void RefreshGallery()
@@ -120,6 +180,15 @@ namespace Image_Gallery
 
             // enables the add tag button
             btnAddTags.Enabled = true;
+
+            // clear tags section
+            lbxMDTags.Items.Clear();
+
+            // repopulate tags section
+            foreach (var tag in image.Tags)
+            {
+                lbxMDTags.Items.Add(tag);
+            }
 
             //show metadata and image in preview column
             UpdatePreview(image);
@@ -218,6 +287,9 @@ namespace Image_Gallery
 
                     // enable add tag button
                     btnAddTags.Enabled = true;
+                    
+                    // clear tag list
+                    lbxMDTags.Items.Clear();
 
                     // refresh gallery
                     RefreshGallery();
@@ -395,6 +467,7 @@ namespace Image_Gallery
 
         }
 
+        // for adding tags with the tag button
         private void btnAddTags_Click(object sender, EventArgs e)
         {
             // get string from user and add it to list box (autocapitalize first character, check for duplicates,
@@ -448,6 +521,15 @@ namespace Image_Gallery
 
                 // add to textbox
                 lbxMDTags.Items.Add(tag);
+
+                // add tag to tag index
+                AddTag(tag);
+
+                // associate tag with image
+                AddImagetoTag(tag, selectedImage);
+
+                // add tag to image's tag list property 
+                selectedImage.Tags.Add(tag);
 
                 // user can type the next tag
                 txtAddTags.Clear();
